@@ -10,7 +10,9 @@ import java.util.List;
 
 @Mapper
 public interface AmeMapper {
-
+/**
+*test pull request
+*/
     List<AmeProject> queryAllAmeProject() throws SQLException;
 
     List<AmeTask> queryAllAmeTask() throws SQLException;
