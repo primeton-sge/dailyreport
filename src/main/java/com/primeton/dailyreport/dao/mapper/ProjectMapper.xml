@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.primeton.dailyreport.dao.mapper.ProjectMapper">
+
+    <resultMap id="baseResultMap" type="com.primeton.dailyreport.dao.pojo.Project">
+        <id column="f_pid" property="pid" jdbcType="INTEGER"/>
+        <result column="f_projectname" property="projectname" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="baseResultMap">
+        SELECT f_pid,f_projectname
+        FROM t_dr_project where f_validity='1';
+    </select>
+
+    <insert id="add" parameterType="com.primeton.dailyreport.dao.pojo.Project">
+        insert into t_dr_project(f_projectname,f_validity) values(#{projectname},#{validity});
+    </insert>
+
+    <update id="delete">
+        update t_dr_project set f_validity='0' where f_pid=#{pid};
+    </update>
+</mapper>

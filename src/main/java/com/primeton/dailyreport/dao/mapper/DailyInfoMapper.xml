@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.primeton.dailyreport.dao.mapper.DailyInfoMapper">
+
+    <resultMap id="baseResultMap" type="com.primeton.dailyreport.dao.pojo.DailyInfoPlus">
+        <id column="f_did" property="did" jdbcType="INTEGER"/>
+        <result column="f_uid" property="uid" jdbcType="INTEGER"/>
+        <result column="f_pid" property="pid" jdbcType="INTEGER"/>
+        <result column="f_flag" property="flag" jdbcType="INTEGER"/>
+        <result column="f_text" property="text" jdbcType="LONGVARCHAR"/>
+        <result column="f_man_hours" property="man_hours" jdbcType="INTEGER"/>
+        <result column="f_date" property="date" jdbcType="TIMESTAMP"/>
+        <result column="f_realname" property="realname" jdbcType="VARCHAR"/>
+        <result column="f_projectname" property="projectname" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="sumResultMap" type="com.primeton.dailyreport.dao.pojo.MonthSum">
+        <result column="f_sum" property="man_hoursSum" jdbcType="INTEGER"/>
+        <result column="f_projectname" property="projectname" jdbcType="VARCHAR"/>
+        <result column="f_date" property="date" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="personalResultMap" type="com.primeton.dailyreport.dao.pojo.PersonalSum">
+        <result column="f_sum" property="man_hoursSum" jdbcType="INTEGER"/>
+        <result column="f_projectname" property="projectname" jdbcType="VARCHAR"/>
+        <result column="f_date" property="date" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="leakyResultMap" type="com.primeton.dailyreport.dao.pojo.LeakyRecord">
+        <result column="f_date" property="date" jdbcType="VARCHAR"/>
+        <result column="f_realname" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="projectResultMap" type="com.primeton.dailyreport.dao.pojo.ProjectSum">
+        <result column="f_sum" property="man_hoursSum" jdbcType="INTEGER"/>
+        <result column="f_realname" property="realname" jdbcType="VARCHAR"/>
+        <result column="f_date" property="date" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="query" resultMap="baseResultMap">
+        SELECT f_did,a.f_uid,a.f_pid,f_text,f_man_hours,f_date,f_realname,f_projectname,f_flag
+        FROM t_dr_daily a
+        left join t_dr_user b on a.f_uid=b.f_uid
+        left join t_dr_project d on a.f_pid=d.f_pid
+        <where>
+            <if test="startdate != null and startdate != ''">
+                and f_date <![CDATA[>=]]> #{startdate}
+            </if>
+            <if test="enddate != null and enddate != ''">
+                and f_date <![CDATA[<=]]> #{enddate}
+            </if>
+            <if test="pid != null">
+                and a.f_pid in <foreach collection="pid" item="item" open="(" separator="," close=")"> #{item} </foreach>
+            </if>
+            <if test="uid != null">
+                and a.f_uid in <foreach collection="uid" item="item" open="(" separator="," close=")"> #{item} </foreach>
+            </if>
+        </where>
+        order by a.f_uid,f_date;
+    </select>
+
+    <select id="querySumByMonth" resultMap="sumResultMap">
+        select sum(f_man_hours) as f_sum,f_projectname, LEFT(#{startdate},7) as f_date
+        from t_dr_daily a
+        left join t_dr_project b on a.f_pid=b.f_pid
+        <where>
+            <if test="startdate != null and startdate != ''">
+                and f_date <![CDATA[>=]]> #{startdate}
+            </if>
+            <if test="enddate != null and enddate != ''">
+                and f_date <![CDATA[<=]]> #{enddate}
+            </if>
+            <if test="pid != null">
+                and a.f_pid = #{pid}
+            </if>
+        </where>
+        group by a.f_pid
+        order by f_sum desc,a.f_pid asc;
+    </select>
+
+    <select id="querySumByPid" resultMap="projectResultMap">
+        select sum(f_man_hours) as f_sum,f_realname, LEFT(#{startdate},7) as f_date
+        from t_dr_daily a
+        left join t_dr_user b on a.f_uid=b.f_uid
+        <where>
+            <if test="startdate != null and startdate != ''">
+                and f_date <![CDATA[>=]]> #{startdate}
+            </if>
+            <if test="enddate != null and enddate != ''">
+                and f_date <![CDATA[<=]]> #{enddate}
+            </if>
+            <if test="pid != null">
+                and a.f_pid in <foreach collection="pid" item="item" open="(" separator="," close=")"> #{item} </foreach>
+            </if>
+        </where>
+        group by a.f_uid
+        order by f_sum desc,a.f_uid asc;
+    </select>
+
+    <select id="querySumByPerson" resultMap="personalResultMap">
+        select sum(f_man_hours) as f_sum,f_projectname,LEFT(#{startdate},7) as f_date
+        from t_dr_daily a
+        left join t_dr_project b on a.f_pid=b.f_pid
+        <where>
+            <if test="startdate != null and startdate != ''">
+                and f_date <![CDATA[>=]]> #{startdate}
+            </if>
+            <if test="enddate != null and enddate != ''">
+                and f_date <![CDATA[<=]]> #{enddate}
+            </if>
+            <if test="pid != null">
+                and a.f_pid in <foreach collection="pid" item="item" open="(" separator="," close=")"> #{item} </foreach>
+            </if>
+            <if test="uid != null">
+                and a.f_uid in <foreach collection="uid" item="item" open="(" separator="," close=")"> #{item} </foreach>
+            </if>
+        </where>
+        group by a.f_pid
+        order by f_sum desc,a.f_pid asc;
+    </select>
+
+    <select id="selectMark" resultType="String">
+        select distinct f_date from t_dr_daily where f_uid=#{uid};
+    </select>
+
+    <insert id="add" parameterType="com.primeton.dailyreport.dao.pojo.DailyInfo" useGeneratedKeys="true" keyProperty="did">
+        insert into t_dr_daily(f_uid,f_pid,f_text,f_man_hours,f_date,f_flag)
+            values(#{uid}, #{pid}, #{text}, #{man_hours}, #{date},0);
+    </insert>
+
+    <update id="update" parameterType="com.primeton.dailyreport.dao.pojo.DailyInfo">
+        update t_dr_daily set f_pid=#{pid},f_text=#{text},f_man_hours=#{man_hours},f_date=#{date}
+            where f_did=#{did}
+    </update>
+
+    <delete id="delete">
+        delete from t_dr_daily where f_did=#{did};
+    </delete>
+
+    <select id="queryByPK" resultMap="baseResultMap">
+        SELECT f_did,a.f_uid,a.f_pid,f_text,f_man_hours,f_date,f_realname,f_projectname
+        FROM t_dr_daily a
+        left join t_dr_user b on a.f_uid=b.f_uid
+        left join t_dr_project d on a.f_pid=d.f_pid
+        where a.f_did=#{did}
+    </select>
+
+    <select id="check" resultMap="leakyResultMap">
+        select distinct f_date,f_realname
+        from t_dr_daily a
+        left join t_dr_user b on a.f_uid=b.f_uid
+        where f_date <![CDATA[>=]]> #{startdate} and f_date <![CDATA[<=]]> #{enddate}
+    </select>
+
+    <select id="checkDate" resultType="String">
+        select distinct f_date
+        from t_dr_daily
+        where f_date <![CDATA[>=]]> #{startdate} and f_date <![CDATA[<=]]> #{enddate} and f_uid = #{uid};
+    </select>
+    <update id="updateFlag">
+        update t_dr_daily set f_flag=1
+        where f_date=#{date} and f_uid=#{uid}
+    </update>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.primeton.dailyreport.dao.mapper.AmeMapper">
+
+    <resultMap id="ameProjectResultMap" type="com.primeton.dailyreport.dao.pojo.AmeProject">
+        <id column="f_ame_projectid" property="ameProjectId" jdbcType="INTEGER"/>
+        <result column="f_ame_projectname" property="ameProjectName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="ameTaskResultMap" type="com.primeton.dailyreport.dao.pojo.AmeTask">
+        <id column="f_ame_taskid" property="ameTaskId" jdbcType="INTEGER"/>
+        <result column="f_ame_taskname" property="ameTaskName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="queryAllAmeProject" resultMap="ameProjectResultMap">
+        SELECT f_ame_projectid,f_ame_projectname
+        FROM t_dr_ame_project;
+    </select>
+
+    <select id="queryAllAmeTask" resultMap="ameTaskResultMap">
+        SELECT f_ame_taskid,f_ame_taskname
+        FROM t_dr_ame_task;
+    </select>
+
+    <select id="queryByTid" resultMap="ameTaskResultMap">
+        SELECT f_ame_taskid,f_ame_taskname
+        FROM t_dr_ame_task
+        where f_ame_taskid = #{ameTaskId};
+    </select>
+</mapper>

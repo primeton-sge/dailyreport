@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>绑定ame+</title>
+    <link th:include="common/statics :: globalsource"/>
+</head>
+<body>
+<div class="page-right-container">
+    <div th:include="common/message::message_body"></div>
+    <div class="row">
+        <div class="iframe-content transition">
+            <div class="row">
+                <div class="portlet">
+                    <div class="portlet-title">
+                        <h4>绑定ame+</h4>
+                        <span class="glyphicon glyphicon-chevron-down float-right" data-toggle="collapse"
+                              data-target="#searchWrapper"></span>
+                    </div>
+                    <div class="alert alert-success alert-dismissible col-md-12" role="alert" th:if="${success_msg != null}">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <span th:text="${success_msg}"></span>
+                    </div>
+                    <div class="form-box">
+                        <form th:action="@{/user/bindAme.htm}" id="addForm" name="addForm" method="post">
+                            <div class="col-md-offset-1" style="margin-top: 10px">
+                                <div class="input-wrapper">
+                                    <label class="form-label">ame+账号</label>
+                                    <input class="form-input" type="text" id="ameUsername" name="ameUsername"/>
+                                </div>
+                                <div class="input-wrapper">
+                                    <label class="form-label">ame+密码</label>
+                                    <input class="form-input" type="password" id="amePassword" name="amePassword"/>
+                                </div>
+                                <br>
+                                <div class="input-wrapper">
+                                    <label class="form-label">工时项目id</label>
+                                    <select class="form-input" id="ameProjectId" name="ameProjectId">
+                                    <option value="">请选择</option>
+                                    <option th:each="vo:${ameProjectList}"
+                                            th:value="${vo.ameProjectId}" th:text="${vo.ameProjectName}" ></option>
+                                    </select>
+                                </div>
+                                <div class="input-wrapper">
+                                    <label class="form-label">项目活动</label>
+                                    <select class="form-input" id="ameTaskId" name="ameTaskId">
+                                    <option value="">请选择</option>
+                                    <option th:each="vo:${ameTaskList}"
+                                            th:value="${vo.ameTaskId}" th:text="${vo.ameTaskName}" ></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="btn-wrapper">
+                            <a class="btn btn-success" onclick="$('#addForm').submit();">绑定<i
+                            ></i></a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:inline="javascript">
+    // function add() {
+    //     var input1=$("#ameUsername").val();
+    //     var input2=$("#amePassword").val();
+    //     var input3=$("#ameProjectId").val();
+    //     var input4=$("#ameTaskId").val();
+    //     if((input1==null||input1=="")&&(input2==null||input2=="")&&(input3==null||input3=="")&&(input4==null||input4=="")){
+    //         alert("输入不能为空！");
+    //     }else {
+    //         $("#addForm").submit();
+    //     }
+    // }
+
+    $(function () {
+        $("#addForm").validate({
+            rules: {
+                ameUsername: "required",
+                amePassword: "required",
+                ameProjectId: "required",
+                ameTaskId: "required"
+            },
+            messages: {
+                ameUsername: "请输入ame+账号",
+                amePassword: "请输入密码",
+                ameProjectId:"请选择项目",
+                ameTaskId:"请选择项目活动"
+            }
+        });
+    })
+</script>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="globalsource">
+
+    <link rel="stylesheet" th:href="@{/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/plugins/bootstrap-table/bootstrap-table.css}"/>
+    <link rel="stylesheet" th:href="@{/plugins/bootstrap-select/css/bootstrap-select.min.css}"/>
+    <link rel="stylesheet" th:href="@{/plugins/bootstrap-treeview/bootstrap-treeview.css}"/>
+    <link rel="stylesheet" th:href="@{/plugins/bootstrap-datepicker/css/datepicker.css}"/>
+
+    <!--自定义-->
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/reset.css}"/>
+    <link rel="stylesheet" th:href="@{/css/overridebootstrap.css}"/>
+
+    <script th:src="@{/plugins/jquery-1.10.2.min.js}"></script>
+    <script th:src="@{/plugins/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/plugins/bootbox/bootbox.min.js}"></script>
+    <script th:src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+    <script th:src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.js}"></script>
+    <script th:src="@{/plugins/bootstrap-treeview/bootstrap-treeview.js}"></script>
+    <script th:src="@{/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js}"></script>
+    <script th:src="@{/plugins/bootstrap-select/js/bootstrap-select.min.js}"></script>
+    <script th:src="@{/plugins/bootstrap-select/js/i18n/defaults-zh_CN.min.js}"></script>
+    <script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+    <script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+    <script th:src="@{/plugins/jquery.cookie.js}"></script>
+
+    <!--自定义-->
+    <script th:src="@{/js/menu.js?v=20180817}"></script>
+    <script th:src="@{/js/extend.js?v=20180817}"></script>
+    <script th:src="@{/js/home.js?v=20180817}"></script>
+    <script th:src="@{/js/table.js?v=20180817}"></script>
+
+    <script th:inline="javascript">
+        var contextPath = [[${#httpServletRequest.getContextPath()}]];
+        $(function () {
+            home.initDate();
+        })
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

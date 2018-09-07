@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+    <link rel="stylesheet" th:href="@{/css/login-style.css}" type="text/css"/>
+    <!--引入静态资源-->
+    <link th:include="common/statics :: globalsource"/>
+</head>
+<body>
+<div id="login" class="login">
+    <div class="form-box">
+        <form th:action="${#httpServletRequest.getContextPath()}+'/user/loginSubmit.htm'" id="commentForm"
+              method="post">
+            <ul style="text-align: center">
+                <li>
+                    <h4 th:if="${er_msg!=null}" th:text="${er_msg}" style="color: red"></h4>
+                </li>
+                <li>
+                    <div class="input-wrapper" style="margin-top: 20px">
+                        <label class="tag">用户名</label>
+                        <input class="form-input" type="text" name="username"/>
+                    </div>
+                </li>
+                <li>
+                    <div class="input-wrapper">
+                        <label class="tag">密码</label>
+                        <input class="form-input" type="password" name="password"/>
+                    </div>
+                </li>
+                <li>
+                    <div class="btn-wrapper" style="float: initial!important;">
+                        <input class="btn submit" type="submit" value="登录"/>
+                        <!--<input id="reset" class="btn reset" type="button" value="重置"/>-->
+                    </div>
+                </li>
+            </ul>
+        </form>
+    </div>
+    <div class="footer">
+        <p>
+            <span></span>
+        </p>
+        <p>
+            工时日报系统
+        </p>
+    </div>
+</div>
+</body>
+<script type="text/javascript" th:inline="javascript">
+    $(function () {
+        $("#commentForm").validate({
+            rules: {
+                username: "required",
+                password: "required"
+            },
+            messages: {
+                username: "请输入用户名",
+                password: "请输入密码"
+            }
+        });
+        $('#reset').on('click', function () {
+            $('.form-input').val('');
+        });
+    })
+</script>
+</html>

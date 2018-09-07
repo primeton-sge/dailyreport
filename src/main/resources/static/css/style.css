@@ -1,0 +1,280 @@
+/*公共*/
+.transition {
+    -moz-transition: all .3s ease-in;
+    -webkit-transition: all .3s ease-in;
+    -o-transition: all .3s ease-in;
+    transition: all .3s ease-in;
+}
+
+label.error {
+    margin-left: 5px;
+    font-size: 12px;
+    color: #e4393c;
+}
+
+input.error {
+    border: 1px solid #ec5656;
+}
+
+/*头部*/
+.header {
+    width: 100%;
+    height: 70px;
+    background: url("../img/headbg.png") no-repeat;
+    background-color: #FFF;
+    background-size: cover;
+    border-bottom: 1px solid #e2e2e2;
+    position: fixed;
+    box-shadow: 1px 1px 1px #888888;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.nav > li > a {
+    margin-top: 15px;
+    color: #000000;
+    font-size: 15px;
+}
+
+/*内容*/
+.content {
+    margin-top: 70px;
+}
+
+.left-content,
+.right-content {
+    display: inline-block;
+    vertical-align: top;
+    height: 100vh;
+}
+
+.left-content {
+    position: fixed;
+    width: 18vw;
+    border-right: 1px solid #e2e2e2;
+}
+
+.right-content {
+    width: 80vw;
+    margin: 20px 15px 50px 18vw;
+    padding-left: 15px;
+}
+
+.menu-content {
+    width: 18vw;
+    height: 100vh;
+    font-size: 15px;
+    background-color: #fafafa;
+    position: absolute;
+    top: 0;
+    right: 0;
+    overflow: auto;
+    padding-bottom: 75px;
+    padding-left: 5px;
+    padding-right: 5px;
+    z-index: 999;
+}
+
+.menu-content .icon-box {
+    margin: 15px 0 10px 0;
+}
+
+.menu-content .icon-box span {
+    float: right;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.menu-content .toggle-icon {
+    width: 29px;
+    height: 29px;
+    margin-right: 1px;
+    opacity: 0.5;
+    background: url("../img/sidebar-toggler-light.jpg") no-repeat #d8d8d8;
+}
+
+.menu-content .leftMenu {
+    margin-top: 50px;
+}
+
+/*iframe内容*/
+.iframe-content {
+    width: 99vw;
+}
+
++
+.portlet {
+    margin-bottom: 20px;
+    -webkit-box-shadow: 4px 4px 8px #888;
+    -moz-box-shadow: 4px 4px 8px #888;
+    box-shadow: 4px 4px 8px #888;
+}
+
+.portlet-title {
+    height: 40px;
+    background-color: #ddd;
+}
+
+.portlet-title h4 {
+    width: 80%;
+    display: inline-block;
+    padding-left: 10px;
+    line-height: 40px;
+}
+
+.portlet-title span {
+    font-size: 18px;
+    color: #fff;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.margin-space-top {
+    margin-top: 10px;
+}
+
+.input-wrapper {
+    display: inline-block;
+}
+
+.form-label {
+    width: 130px;
+    font-size: 14px;
+    font-weight: 100;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.form-input {
+    width: 220px;
+    height: 34px;
+    padding: 5px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    /*border-radius: 3px;
+    border: 1px solid #ccc;*/
+}
+
+.btn-wrapper {
+    float: right;
+    margin-bottom: 15px;
+}
+
+.table-scrollable {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.table-scrollable .table {
+    margin-bottom: 0;
+}
+
+.table-scrollable .table .on td {
+    background-color: #fbe8cc;
+}
+
+.table-scrollable .table-striped > tbody > tr:nth-child(odd) > td,
+.table-scrollable .table-striped > tbody > tr:nth-child(odd) > th {
+    background-color: #fff;
+}
+
+.table-scrollable .table-striped > tbody > tr.on:nth-child(odd) > td,
+.table-scrollable .table-striped > tbody > tr.on:nth-child(odd) > th {
+    background-color: #fbe8cc;
+}
+
+.a-btn {
+    display: inline-block;
+    border-width: 0;
+    padding: 7px 14px;
+    font-size: 14px;
+    outline: none;
+    border-radius: 0;
+    cursor: pointer;
+    opacity: .8;
+    color: white;
+}
+
+.a-btn-ope {
+    display: inline-block;
+    border-width: 0;
+    padding: 4px 15px;
+    font-size: 11px;
+    outline: none;
+    border-radius: 0;
+    cursor: pointer;
+    opacity: .8;
+    color: white;
+    background-color: #428bca;
+}
+
+.a-btn.green {
+    background-color: #35aa47;
+}
+
+.a-btn.grey {
+    background-color: #808080;
+}
+
+.a-btn:hover {
+    opacity: 1;
+    color: white;
+}
+
+.a-btn-ope:hover {
+    opacity: 1;
+    color: white;
+}
+
+.a-btn .glyphicon {
+    margin-left: 5px;
+}
+
+.glyphicon-chevron-left,
+.glyphicon-chevron-right,
+.glyphicon-chevron-down {
+    font-size: 12px;
+    color: #ccc;
+}
+
+.float-right {
+    float: right;
+}
+
+/*底部*/
+.footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    bottom: 0;
+    padding: 8px 20px 5px 20px;
+    background-color: #fafafa;
+    border-top: 1px solid #e2e2e2;
+}
+
+.footer .footer-inner,
+.footer .footer-tools {
+    display: inline-block;
+}
+
+.footer .footer-tools {
+    float: right;
+}
+
+.footer .footer-tools .go-top {
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: #666;
+    padding: 2px 6px;
+}
+
+.footer .footer-tools .go-top:hover {
+    opacity: 0.7;
+}

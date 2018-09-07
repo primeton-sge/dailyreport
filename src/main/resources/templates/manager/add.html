@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>项目新增</title>
+    <link th:include="common/statics :: globalsource"/>
+</head>
+<body>
+<div class="page-right-container">
+    <div th:include="common/message::message_body"></div>
+    <div class="row">
+        <div class="iframe-content transition">
+            <div class="row">
+                <div class="portlet">
+                    <div class="portlet-title">
+                        <h4>项目新增</h4>
+                        <span class="glyphicon glyphicon-chevron-down float-right" data-toggle="collapse"
+                              data-target="#searchWrapper"></span>
+                    </div>
+                    <div class="form-box">
+                        <form th:action="@{/manager/add.htm}" id="addForm" name="addForm" method="post">
+                            <div class="col-md-offset-3" style="margin-top: 10px">
+                                <div class="input-wrapper">
+                                    <label class="form-label">项目名称</label>
+                                    <input class="form-input" type="text" id="projectname" name="projectname"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!--<form class="form-horizontal" role="form" id="addForm" name="addForm"
+                          th:action="@{/manager/add.htm}"  method="post">
+                        <h6>项目名称</h6>
+                            <input class="text" type="text" id="projectname" name="projectname" />
+                    </form>-->
+                    <div class="col-md-12">
+                        <div class="btn-wrapper">
+                            <a class="btn btn-success" onclick="add()">保存<i
+                            ></i></a>
+                            <a id="btnRemove" class="btn btn-success"  onclick="back()">返回<i
+                            ></i></a>
+                            <!-- <a>没有disabled属性 -->
+                            <!--<button class="btn btn-primary" disabled="disabled" id="ttst">Button</button>-->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:inline="javascript">
+    function add() {
+        var input=$("#projectname").val();
+        if(input==null||input==""){
+            alert("输入不能为空！");
+        }else {
+            $("#addForm").submit();
+        }
+    }
+    function back() {
+        window.location.href=contextPath+"/manager/query.htm";
+    }
+</script>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="message_body">
+    <div id="msg-board">
+        <div class="error div-info"
+             th:style="${CIDS_MESSAGE} and ${CIDS_MESSAGE.isError()}?
+			'display:block;background-color: #ed4e2a; border: 1px solid #cecece;'  :  
+			'display:none;background-color: #ed4e2a; border: 1px solid #cecece;' ">
+            <label style="padding-left:20px;height:34px;line-height:34px;color:#fff;font-size:15px;font-weight:bold;margin-bottom:0px;font-family:Microsoft YaHei,微软雅黑,Arial,sans-serif;"
+                   th:utext="${#httpServletRequest.getAttribute('DAILY_MESSAGE')}?${#httpServletRequest.getAttribute('DAILY_MESSAGE').message}:''">后台异常信息</label>
+
+            <!--<div th:object="${#httpServletRequest.getAttribute('DAILY_MESSAGE')}"-->
+            <!--th:if="${#httpServletRequest.getAttribute('DAILY_MESSAGE')}">-->
+            <!--<div style="padding-left: 20px; padding-top: 10px;">-->
+            <!--<button class="btn blue exception-button" style="max-height: 28px;"-->
+            <!--onclick="$('#msg-board .exception').slideDown('fast'); $('#msg-board .exception-button').hide();"-->
+            <!--th:if="*{not #lists.isEmpty(exceptions)}">查看详细信息-->
+            <!--</button>-->
+            <!--</div>-->
+            <!--<div class="exception" style="padding-left: 20px; display: none">-->
+            <!--&lt;!&ndash; <p style="max-height: 15px;" th:each="exception, rowStat : ${#httpServletRequest.getAttribute('DAILY_MESSAGE').exceptions}" th:text="${exception}"/> &ndash;&gt;-->
+            <!--<th:block th:each="exception:*{exceptions}">-->
+            <!--<span th:text="${exception}"></span>-->
+            <!--<br/>-->
+            <!--</th:block>-->
+            <!--</div>-->
+            <!--</div>-->
+        </div>
+
+        <div class="notice"
+             th:style="${DAILY_MESSAGE} and ${DAILY_MESSAGE.isNotice()}?
+			'display:block; background-color: #57b5e3; ' : 
+			'display:none;background-color: #57b5e3; '">
+            <label style="padding-left:20px;height:34px;line-height:34px;color:#fff;font-size:15px;font-weight:bold;margin-bottom:0px;font-family:Microsoft YaHei,微软雅黑,Arial,sans-serif;"
+                   th:utext="${#httpServletRequest.getAttribute('DAILY_MESSAGE')}?${#httpServletRequest.getAttribute('DAILY_MESSAGE').message}:''">后台异常信息</label>
+        </div>
+
+        <div class="warning"
+             th:style="${DAILY_MESSAGE} and ${DAILY_MESSAGE.isWarning()}?
+			'display:block; background-color: yellow; border: 1px solid #FFCC99; _padding-bottom: 20px;':'display:none;background-color: yellow; border: 1px solid #FFCC99; _padding-bottom: 20px;'">
+            <h4 style="padding-left: 20px;font-weight: bold !important;color: #253650;"
+                th:utext="${#httpServletRequest.getAttribute('DAILY_MESSAGE')}?${DAILY_MESSAGE.message}:''">后台异常信息</h4>
+        </div>
+        <!--错误信息展示/隐藏 edit by wangjian 2018年2月9日10:19:00-->
+        <script type="text/javascript" th:inline="javascript">
+            function showErrMessage(errMSg) {
+                $('#msg-board>div.error>label').text(errMSg);
+                $('#msg-board>div.notice').hide();
+                $('#msg-board>div.error').show();
+            };
+
+            function hideErrMessage() {
+                $('#msg-board>div.error').hide();
+            };
+
+            function showNoticeMessage(errMSg) {
+                $('#msg-board>div.notice>label').text(errMSg);
+                $('#msg-board>div.error').hide();
+                $('#msg-board>div.notice').show();
+            };
+
+            function hideNoticeMessage() {
+                $('#msg-board>div.notice').hide();
+            };
+
+        </script>
+    </div>
+</div>
+</body>
+</html>

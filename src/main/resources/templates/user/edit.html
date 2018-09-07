@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>工时日报系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/plugins/layui/css/layui.css}" media="all" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/plugins/css/date.css}" media="all" type="text/css"/>
+    <!--引入静态资源-->
+    <link th:include="common/statics :: globalsource"/>
+
+
+</head>
+<body>
+<div class="layui-container" style="padding: 15px;">
+    <div class="layui-row">
+        <div class="alert alert-danger alert-dismissible col-md-12" role="alert" th:if="${er_msg != null && er_msg != ''}">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <span th:text="${er_msg}"></span>
+        </div>
+        <div class="alert alert-success alert-dismissible col-md-12" role="alert" th:if="${success_msg != null}">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            <span th:text="${success_msg}"></span>
+        </div>
+        <div class="layui-col-md12">
+            <blockquote class="layui-elem-quote">日报填写</blockquote>
+        </div>
+        <div class="layui-inline" id="test-n2"></div>
+        <form id="delete" name="delete" class="layui-form" action="daily/delete.htm" method="post" hidden="hidden">
+            <input id="did" name="did" hidden="hidden"/>
+        </form>
+    </div>
+</div>
+<form id="send" action="" method="post" hidden="hidden">
+    <input id="sendDate" name="date" hidden="hidden" />
+</form>
+</body>
+
+<script th:src="@{/plugins/layui/layui.js}"></script>
+<script>
+    function setCookie() {
+        var pid=$("#work_term").val();
+        var content=$("#text_book").val();
+        $.cookie("pid",pid,{expires:7});
+        $.cookie("manHour",8,{expires:7});
+        $.cookie("content",content,{expires:7});
+
+
+    }
+        function getCookie(){
+            $("#work_term").val($.cookie("pid"));
+            $("#time").val($.cookie("manHour"));
+            $("#text_book").val($.cookie("content"));
+        }
+
+
+    layui.use(['layer', 'form', 'jquery', 'laydate'], function () {
+        var layer = layui.layer,
+            $ = layui.jquery,
+            laydate = layui.laydate,
+            form = layui.form;
+
+
+        //定义json
+        var data = Mark();
+        var dataArr = [];
+        var new_date = new Date();
+        loding_date(new_date, data);
+
+        //日历插件调用方法
+        function loding_date(date_value, data) {
+
+            laydate.render({
+                elem: '#test-n2'
+                , type: 'date'
+                , theme: '#FFB800'
+                , max: '2099-06-16 23:59:59'
+                , position: 'static'
+                , range: false
+                , value: date_value
+                , isInitValue: false
+                , calendar: false
+                , btns: false
+                , ready: function (value) {
+                    //console.log(value);
+                    hide_mr(value);
+                }
+                , done: function (value, date, endDate) {
+                    // console.log(value); //得到日期生成的值，如：2017-08-18
+                    // console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+                    // console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+                    // layer.msg(value)
+
+                    //调用弹出层方法
+                    if (judgeDate(value)) {
+                        date_chose1(value, data);
+                    }
+
+                }
+                , change: function (value, date) {
+                    hide_mr(date);
+                }
+                , mark: data //重要json！
+
+            });
+        }
+
+
+        function hide_mr(value) {
+            var mm = value.year + '-' + value.month + '-' + value.date;
+
+            $('.laydate-theme-grid table tbody').find('[lay-ymd="' + mm + '"]').removeClass('layui-this');
+            //console.log(value)
+        }
+
+
+        //获取隐藏的弹出层内容
+        var date_choebox = $('.date_box').html();
+
+        //初始弹出层
+        function date_chose1(obj_date, date) {
+            var index = layer.open({
+                type: 1,
+                skin: 'layui-layer-rim',
+                title: '添加日报记录',
+                area: ['700px', '300px'],
+                content: queryDetail(obj_date),
+                btn: ['添加', '确定','同步'],
+                yes: function () {
+                    date_chose2(obj_date, date);
+                    getCookie();
+                },
+                btn2: function () {
+                    $('#test-n2').empty();
+                    loding_date(new Date(),Mark());
+                    layer.close(index);
+                },
+                btn3: function () {
+                    $("#sendDate").val(obj_date);
+                    $("#send").attr("action",contextPath +'/daily/send.htm' );
+                    $("#send").submit();
+                }
+            });
+            form.render();
+        }
+
+        //定义弹出层方法
+        function date_chose2(obj_date, data) {
+            var index = layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                title: '添加日报记录',
+                area: ['300px', '450px'], //宽高
+                btn: ['确定', '取消'],
+                content:
+                    '<form id="work" name ="work" class="layui-form" action="" method="post">' +
+                    '<div>' +
+                    '<b>工作项目：</b><select id="work_term" name="pid" class="layui-select">' +
+                    '<option value="">-请选择-</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '<div>' +
+                    '<b>工作时长：</b><select id="time" name="man_hours" class="layui-select" >' +
+                    '<option value="">-请选择-</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '<div class="layui-form-item layui-form-text">' +
+                    '<b>工作内容：</b><textarea id="text_book" name="text" placeholder="请输入内容"  class="layui-textarea"></textarea>' +
+                    '</div>' +
+                    '<input id="date1" name="date" class="layui-input" hidden="hidden" />' +
+                    '</form>'
+                , success: function () {
+                    $('#text_book').val(data[obj_date])
+                }
+                , yes: function () {
+                    //调用添加/编辑标注方法
+                    if ($('#text_book').val() != '' && $('#work_term').val() != '' && $('#time').val() != '') {
+                        $("#date1").val(obj_date);
+                        $.ajax({
+                            url: contextPath + '/daily/add.htm',
+                            type: 'POST',
+                            data: {'jsonStr': JSON.stringify($('#work').serializeObject())},
+                            success: function (response) {
+                                var ct = $('#contentTable');
+                                $('<tr id="'+response.did+'"></tr>')
+                                    .append($('<td></td>').text(response.projectname))
+                                    .append($('<td></td>').text(response.man_hours))
+                                    .append($('<td></td>').text(response.text))
+                                    .append($('<td></td>').append($('<a>删除</a>').addClass('layui-btn layui-btn-sm').attr('onclick','dele('+response.did+');')))
+                                    .appendTo(ct);
+                                layer.close(index);
+                            }
+
+                        });
+                    } else {
+                        layer.msg('不能为空', {icon: 2});
+                    }
+                    setCookie();
+                }, btn2: function () {
+                    layer.close(index);
+                }
+            });
+            form.render();
+            loadSelect();
+            loadTime();
+        }
+
+        function loadTime() {
+            var select = document.getElementById("time");
+            for (var i = 1; i < 17; i++) {
+                var option = document.createElement("option");
+                option.setAttribute("value", i);
+                option.innerText = i;
+                select.appendChild(option);
+
+            }
+            form.render('select');
+        }
+
+        function loadSelect() {
+            $.ajax({
+                type: 'GET',
+                url: contextPath + '/manager/queryList.htm',
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+                    var select = document.getElementById("work_term");
+                    for (var i = 0; i < data.length; i++) {
+                        var option = document.createElement("option");
+                        option.setAttribute("value", data[i].pid);
+                        option.innerText = data[i].projectname;
+                        select.appendChild(option);
+                    }
+                    $("#work_term").find("option[value = '"+$.cookie("pid")+"']").attr("selected","selected");
+                    form.render('select');
+                }
+            });
+
+        }
+
+
+        //定义添加/编辑标注方法
+        function chose_moban(obj_date, markJson) {
+            //获取弹出层val
+            var chose_moban_val = $('#text_book').val();
+
+            $('#test-n2').html('');//重要！由于插件是嵌套指定容器，再次调用前需要清空原日历控件
+            //添加属性
+            markJson[obj_date] = chose_moban_val;
+
+            data = {
+                time: obj_date,
+                value: chose_moban_val
+            }
+
+
+            //添加修改数值
+            for (var i in dataArr) {
+                if (dataArr[i].time == obj_date) {
+                    dataArr[i].value = chose_moban_val;
+                    dataArr.splice(i, 1);
+                }
+            }
+            dataArr.push(data);
+
+            //按时间正序排序
+
+            dataArr.sort(function (a, b) {
+                return Date.parse(a.time) - Date.parse(b.time);//时间正序
+            });
+
+
+            //按时间倒序排列
+//				dataArr.sort(function(a,b){
+//					return Date.parse(b.time) - Date.parse(a.time);//时间正序
+//				});
+
+
+            //console.log(JSON.stringify(data))
+            // console.log(JSON.stringify(markJson));
+            console.log(JSON.stringify(dataArr))
+
+            //再次调用日历控件，
+            loding_date(obj_date, markJson);//重要！，再标注一个日期后会刷新当前日期变为初始值，所以必须调用当前选定日期。
+
+        }
+
+
+    });
+
+    function queryDetail(obj_date) {
+        var s = '<div>' +
+            '<table class="layui-table" id="contentTable">' +
+            '<colgroup>' +
+            '<col width="150">' +
+            '<col width="200">' +
+            '<col>' +
+            '</colgroup>' +
+            '<thead>' +
+            '<tr>' +
+            '<th>项目名称</th>' +
+            '<th>工时时长</th>' +
+            '<th>工作内容</th>' +
+            '<th>操作</th>' +
+            '</tr>' +
+            '</thead>' +
+            '<tbody>';
+        $.ajax({
+            type: 'GET',
+            url: contextPath + '/daily/getdaily.htm',
+            data: {"date": obj_date},
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+
+                    s += ('<tr id="'+data[i].did+'">' +
+                        '<td>' + data[i].projectname + '</td>' +
+                        '<td>' + data[i].man_hours + '</td>' +
+                        '<td>' + data[i].text + '</td>' +
+                        '<td><a id="dele" class="layui-btn layui-btn-sm" onclick="dele(' + data[i].did + ');">删除</a></td>' +
+                        '</tr>')
+                }
+                s += ('</tbody>' +
+                    '</table>' +
+                    '</div>'
+                );
+
+            }
+        });
+        return s;
+
+    }
+
+    function dele(Id) {
+        if(confirm("确定删除吗?")) {
+            $.ajax({
+                type: 'GET',
+                url: contextPath + '/daily/delete.htm',
+                data: {"did":Id},
+                dataType: 'json',
+                success: function (data) {
+                    if(data) {
+                        $("#" + Id).remove();
+                    }
+                }
+            });
+        }
+
+    }
+
+    function Mark() {
+        var mark = "";
+        $.ajax({
+            type: 'GET',
+            url: contextPath + '/daily/mark.htm',
+            data: {},
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                mark = data;
+            }
+        });
+        return mark;
+    }
+
+    function judgeDate(clieckDay) {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+        var d1 = new Date(currentdate.replace("-", "/"));
+        var d2 = new Date(clieckDay.replace("-", "/"));
+        if (d1 < d2) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+</script>
+</html>
+<!--http://yanshi.sucaihuo.com/jquery/36/3669/demo/   http://www.sucaihuo.com/js/3669-->
