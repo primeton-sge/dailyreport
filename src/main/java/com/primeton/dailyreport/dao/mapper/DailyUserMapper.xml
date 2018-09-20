@@ -12,19 +12,20 @@
         <result column="f_ame_password" property="amePassword" jdbcType="VARCHAR"/>
         <result column="f_ame_projectid" property="ameProjectId" jdbcType="INTEGER"/>
         <result column="f_ame_taskid" property="ameTaskId" jdbcType="INTEGER"/>
+        <result column="f_mail" property="mail" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="queryUser" resultMap="baseResultMap">
         SELECT f_uid,f_username,f_realname,f_password,f_jurisdiction,
-                f_ame_username,f_ame_password,f_ame_projectid,f_ame_taskid
+                f_ame_username,f_ame_password,f_ame_projectid,f_ame_taskid,f_mail
         FROM t_dr_user
         WHERE f_username = #{username} and f_password = #{password};
     </select>
 
     <select id="queryAll" resultMap="baseResultMap">
         SELECT f_uid,f_username,f_realname,f_password,f_jurisdiction,
-                f_ame_username,f_ame_password,f_ame_projectid,f_ame_taskid
-        FROM t_dr_user where f_jurisdiction !='1';
+                f_ame_username,f_ame_password,f_ame_projectid,f_ame_taskid,f_mail
+        FROM t_dr_user where f_jurisdiction ='2' or f_jurisdiction ='3';
     </select>
 
     <update id="changePassword">

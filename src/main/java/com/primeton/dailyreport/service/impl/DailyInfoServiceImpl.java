@@ -80,4 +80,9 @@ public class DailyInfoServiceImpl implements DailyInfoService {
     public void updateFlag(String date, Integer uid) throws SQLException {
         dailyInfoMapper.updateFlag(date,uid);
     }
+
+    @Override
+    public List<DailyInfoPlus> queryDaily(String date) throws SQLException {
+        return dailyInfoMapper.queryDaily(date);
+    }
 }

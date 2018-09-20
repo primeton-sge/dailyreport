@@ -14,6 +14,18 @@
         <result column="f_projectname" property="projectname" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <resultMap id="baseResultMap2" type="com.primeton.dailyreport.dao.pojo.DailyInfoPlus">
+        <id column="f_did" property="did" jdbcType="INTEGER"/>
+        <result column="f_uid" property="uid" jdbcType="INTEGER"/>
+        <result column="f_pid" property="pid" jdbcType="INTEGER"/>
+        <result column="f_flag" property="flag" jdbcType="INTEGER"/>
+        <result column="text" property="text" jdbcType="LONGVARCHAR"/>
+        <result column="sum" property="man_hours" jdbcType="INTEGER"/>
+        <result column="f_date" property="date" jdbcType="TIMESTAMP"/>
+        <result column="f_realname" property="realname" jdbcType="VARCHAR"/>
+        <result column="f_projectname" property="projectname" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <resultMap id="sumResultMap" type="com.primeton.dailyreport.dao.pojo.MonthSum">
         <result column="f_sum" property="man_hoursSum" jdbcType="INTEGER"/>
         <result column="f_projectname" property="projectname" jdbcType="VARCHAR"/>
@@ -161,4 +173,13 @@
         update t_dr_daily set f_flag=1
         where f_date=#{date} and f_uid=#{uid}
     </update>
+
+    <select id="queryDaily" resultMap="baseResultMap2">
+        SELECT concat(GROUP_CONCAT(f_text),";") text,sum(f_man_hours) sum,f_date,f_realname
+        FROM t_dr_daily a
+        left join t_dr_user b on a.f_uid=b.f_uid
+        left join t_dr_project d on a.f_pid=d.f_pid
+        where f_date=#{date} and (f_jurisdiction = '2' or f_jurisdiction = '3')
+        group by a.f_uid
+    </select>
 </mapper>

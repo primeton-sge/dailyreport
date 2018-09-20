@@ -32,4 +32,6 @@ public interface DailyInfoService {
     List<String> checkDate(String startdate, String enddate, Integer uid) throws SQLException;
 
     void updateFlag(String date,Integer uid) throws SQLException;
+
+    List<DailyInfoPlus> queryDaily(String date)throws SQLException;
 }

@@ -121,4 +121,12 @@ public interface DailyInfoMapper {
      * @throws SQLException
      */
     void updateFlag(@Param("date")String date,@Param("uid")Integer uid)throws SQLException;
+
+    /**
+     * 查询当日所有员工的工时明细
+     * @param date
+     * @return
+     * @throws SQLException
+     */
+    List<DailyInfoPlus> queryDaily(@Param("date")String date)throws SQLException;
 }

@@ -14,6 +14,7 @@ public class DailyUser {
     private String amePassword; //ame绑定密码
     private Integer ameProjectId; //ame项目id
     private Integer ameTaskId; //ame项目活动id
+    private String mail;//邮箱
 
     public Integer getUid() {
         return uid;
@@ -85,5 +86,13 @@ public class DailyUser {
 
     public void setAmeTaskId(Integer ameTaskId) {
         this.ameTaskId = ameTaskId;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 }

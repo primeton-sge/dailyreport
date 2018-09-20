@@ -191,6 +191,6 @@ public class DateUtils {
         return String.valueOf(year) + String.valueOf(month);
     }
     public static void main(String[] args) {
-        System.out.println(getCurrentMonday(-3));
+        System.out.println(getCurrentMonday(0));
     }
 }

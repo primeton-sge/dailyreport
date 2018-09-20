@@ -8,6 +8,7 @@ import com.primeton.dailyreport.dao.pojo.DailyInfoPlus;
 import com.primeton.dailyreport.dao.pojo.DailyUser;
 import com.primeton.dailyreport.service.AmeService;
 import com.primeton.dailyreport.service.DailyInfoService;
+import com.primeton.dailyreport.service.impl.MailServiceImpl;
 import com.primeton.dailyreport.util.AESUtil;
 import com.primeton.dailyreport.util.DateUtils;
 import com.primeton.dailyreport.util.PythonUtil;
@@ -36,6 +37,9 @@ public class DailyController extends BaseController {
 
     @Autowired
     private AmeService ameService;
+
+    @Autowired
+    private MailServiceImpl mailService;
 
     @RequestMapping(value = {"/save.htm"})
     public String query(HttpServletRequest request, Model model) {
@@ -168,14 +172,14 @@ public class DailyController extends BaseController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (!actHour.equals("0")) {
-                PythonUtil.callPython(user.getAmeUsername(), AESUtil.invokeDecryptEncode(user.getAmePassword()), String.valueOf(user.getAmeProjectId()),
-                        String.valueOf(user.getAmeTaskId()), ameTask.getAmeTaskName(), date, actHour, otwHour);
-            }
             try {
                 dailyInfoService.updateFlag(date, user.getUid());
             } catch (SQLException e) {
                 e.printStackTrace();
+            }
+            if (!actHour.equals("0")) {
+                PythonUtil.callPython(user.getAmeUsername(), AESUtil.invokeDecryptEncode(user.getAmePassword()), String.valueOf(user.getAmeProjectId()),
+                        String.valueOf(user.getAmeTaskId()), ameTask.getAmeTaskName(), date, actHour, otwHour);
             }
             model.addAttribute(SUCCESS_MSG, "工时同步至AME成功");
         }
