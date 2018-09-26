@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ExcelUtil {
-    public static File createExcelTemplate(int year, int month, List<ExcelInfo> excelInfoList) {
+    public static File createExcelTemplate(int year, int month, List<ExcelInfo> excelInfoList, String currentMonday) {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFFont font = workbook.createFont();
         font.setBold(true);
@@ -81,6 +81,8 @@ public class ExcelUtil {
         cellStyle8.setBorderTop(BorderStyle.THIN);
 
         Row row = sheet.createRow(0);
+        currentMonday = currentMonday.substring(0, 4) + "/" + currentMonday.substring(5, 7) + "/" +
+                currentMonday.substring(8, 10);
         for(int i = 0; i <= excelInfoList.size(); i++) {
             if(i == 0) {
                 sheet.addMergedRegion(new CellRangeAddress(0,0,0,1));
@@ -100,9 +102,10 @@ public class ExcelUtil {
         for (int i = 0; i < dayNumOfMonth; i++, cal.add(Calendar.DATE, 1)) {
             Date d = cal.getTime();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            String date = simpleDateFormat.format(d);
             Row rowTemp = sheet.createRow(i + 1);
-            if(getWeekOfDate(d).equals("日") || getWeekOfDate(d).equals("六")) {
-                rowTemp.createCell(0).setCellValue(simpleDateFormat.format(d));
+            if(getWeekOfDate(d).equals("日") || getWeekOfDate(d).equals("六") || DateUtils.holiday(date) == 2) {
+                rowTemp.createCell(0).setCellValue(date);
                 rowTemp.getCell(0).setCellStyle(cellStyle2);
                 rowTemp.createCell(1).setCellValue(getWeekOfDate(d));
                 rowTemp.getCell(1).setCellStyle(cellStyle2);
@@ -114,8 +117,21 @@ public class ExcelUtil {
                     rowTemp.createCell(3 * j + 1).setCellValue(0.0);
                     rowTemp.getCell(3 * j + 1).setCellStyle(cellStyle5);
                 }
+            } else if(date.compareTo(currentMonday) >= 0) {
+                rowTemp.createCell(0).setCellValue(date);
+                rowTemp.getCell(0).setCellStyle(cellStyle4);
+                rowTemp.createCell(1).setCellValue(getWeekOfDate(d));
+                rowTemp.getCell(1).setCellStyle(cellStyle4);
+                for(int j = 1; j <= excelInfoList.size(); j++) {
+                    rowTemp.createCell(3 * j - 1);
+                    rowTemp.getCell(3 * j - 1).setCellStyle(cellStyle3);
+                    rowTemp.createCell(3 * j);
+                    rowTemp.getCell(3 * j).setCellStyle(cellStyle3);
+                    rowTemp.createCell(3 * j + 1).setCellValue(0.0);
+                    rowTemp.getCell(3 * j + 1).setCellStyle(cellStyle3);
+                }
             } else {
-                rowTemp.createCell(0).setCellValue(simpleDateFormat.format(d));
+                rowTemp.createCell(0).setCellValue(date);
                 rowTemp.getCell(0).setCellStyle(cellStyle4);
                 rowTemp.createCell(1).setCellValue(getWeekOfDate(d));
                 rowTemp.getCell(1).setCellStyle(cellStyle4);
@@ -162,7 +178,7 @@ public class ExcelUtil {
         endRow1.getCell(2).setCellStyle(cellStyle4);
         endRow2.createCell(1);
         endRow2.getCell(1).setCellStyle(cellStyle7);
-        endRow2.getCell(1).setCellFormula("B" + (dayNumOfMonth + 3) + "/8/20.83");
+        endRow2.getCell(1).setCellFormula("B" + (dayNumOfMonth + 4) + "/8/20.83");
         endRow2.createCell(2).setCellValue("人月");
         endRow2.getCell(2).setCellStyle(cellStyle4);
         Row endRow3 = sheet.createRow(dayNumOfMonth + 5);
@@ -188,16 +204,11 @@ public class ExcelUtil {
 
     public static boolean appendExcel(List<ExcelInfo> excelInfoList, List<Date> dates, String lastMonday, String currentMonday) {
         boolean flag = false;
-//        if(!startdate.substring(5, 7).equals(enddate.substring(5, 7))) {
-//            File file = createExcelTemplate(Integer.parseInt(enddate.substring(0, 4)),
-//                    Integer.parseInt(enddate.substring(0, 4)), excelInfoList);
-//            flag = true;
-//        }
         File lastfile = new File(System.getProperty("user.dir") +
                 "/template" + lastMonday.substring(0, 4) + lastMonday.substring(5 , 7) + ".xlsx");
         if(!lastfile.exists()) {
             lastfile = createExcelTemplate(Integer.parseInt(lastMonday.substring(0, 4)),
-                    Integer.parseInt(lastMonday.substring(5 , 7)), excelInfoList);
+                    Integer.parseInt(lastMonday.substring(5 , 7)), excelInfoList, currentMonday);
         }
         FileInputStream in = null;
         Workbook workbook = null;
@@ -230,9 +241,7 @@ public class ExcelUtil {
                 int rownum = Integer.parseInt(dateString.substring(dateString.length() - 2 ,dateString.length()));
                 if(data == null) {
                     if(!getWeekOfDate(date).equals("日") && !getWeekOfDate(date).equals("六")) {
-                        sheet.addMergedRegion(new CellRangeAddress(rownum,rownum,3 * i + 2,3 * i + 3));
-                        sheet.getRow(rownum).getCell(3 * i + 2).setCellValue("请假");
-                        sheet.getRow(rownum).getCell(3 * i + 2).setCellStyle(cellStyle);
+                        sheet.getRow(rownum).getCell(3 * i + 3).setCellValue(18 + ":00");
                     }
                 } else {
                     String[] datas = data.split("@");
@@ -318,9 +327,9 @@ public class ExcelUtil {
         return colRef.toString();
     }
 
-    public static File cloneFile(String path, String currentMonday) {
+    public static File cloneFile(String path, String currentMonday, String filename) {
         int n = 0;
-        File copy = new File(path.substring(0, path.length() - 19) + "普元管控开发人员考勤工作量统计表-" +
+        File copy = new File(path.substring(0, path.length() - 19) + filename + "-" +
             currentMonday.substring(0, 4) + currentMonday.substring(5 , 7) + currentMonday.substring(8, 10) + ".xlsx");
         try {
             FileInputStream fis = new FileInputStream(path);

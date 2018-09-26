@@ -13,19 +13,22 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.*;
 
-import com.primeton.dailyreport.util.ExcelUtil;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MailServiceImpl {
+    @Autowired
+    private JavaMailSender javaMailSender;
+
     public static String myEmailAccount = "kongyy@primeton.com";
 
     public static String myEmailPassword = "Kyy950910.rell";
 
     public static String myEmailSMTPHost = "smtp.exmail.qq.com";
 
-    public void send(String msg, File excelFile, String receiveMailAccount) throws Exception {
+    public void send(String msg, List<File> fileList, String receiveMailAccount) throws Exception {
         // 1. 创建参数配置, 用于连接邮件服务器的参数配置
         Properties props = new Properties();                    // 参数配置
         props.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
@@ -36,7 +39,7 @@ public class MailServiceImpl {
         Session session = Session.getInstance(props);
 
         // 3. 创建一封邮件
-        MimeMessage message = createMimeMessage(session, myEmailAccount, receiveMailAccount, msg, excelFile);
+        MimeMessage message = createMimeMessage(session, myEmailAccount, receiveMailAccount, msg, fileList);
 
         // 4. 根据 Session 获取邮件传输对象
         Transport transport = session.getTransport();
@@ -73,20 +76,20 @@ public class MailServiceImpl {
      * @return
      * @throws Exception
      */
-    public MimeMessage createMimeMessage(Session session, String sendMail, String receiveMail,String msg,File excelFile) throws Exception {
+    public MimeMessage createMimeMessage(Session session, String sendMail, String receiveMail,String msg,List<File> fileList) throws Exception {
         // 1. 创建一封邮件
         MimeMessage message = new MimeMessage(session);
 
-        // 2. From: 发件人（昵称有广告嫌疑，避免被邮件服务器误认为是滥发广告以至返回失败，请修改昵称）
-        message.setFrom(new InternetAddress(sendMail, "primeton", "UTF-8"));
+        // 2. From: 发件人
+        message.setFrom(new InternetAddress(sendMail, "孔园园", "UTF-8"));
 
         // 3. To: 收件人（可以增加多个收件人、抄送、密送）
         message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receiveMail, "Dear", "UTF-8"));
 
-        // 4. Subject: 邮件主题（标题有广告嫌疑，避免被邮件服务器误认为是滥发广告以至返回失败，请修改标题）
+        // 4. Subject: 邮件主题
         message.setSubject("考勤统计", "UTF-8");
 
-        // 5. Content: 邮件正文（可以使用html标签）（内容有广告嫌疑，避免被邮件服务器误认为是滥发广告以至返回失败，请修改发送内容）
+        // 5. Content: 邮件正文（可以使用html标签）
         message.setContent(msg, "text/html;charset=UTF-8");
 
         // 6. 设置发件时间
@@ -94,15 +97,15 @@ public class MailServiceImpl {
 
         MimeMultipart msgMultipart = new MimeMultipart("mixed");
         message.setContent(msgMultipart);
+        for(File file : fileList) {
+            MimeBodyPart attch = new MimeBodyPart();
+            attch.setFileName(MimeUtility.encodeText(file.getName()));
+            DataSource dataSource = new FileDataSource(file);
+            DataHandler dataHandler = new DataHandler(dataSource);
+            attch.setDataHandler(dataHandler);
 
-        MimeBodyPart attch = new MimeBodyPart();
-        msgMultipart.addBodyPart(attch);
-
-        DataSource dataSource = new FileDataSource(excelFile);
-        DataHandler dataHandler = new DataHandler(dataSource);
-        attch.setDataHandler(dataHandler);
-        attch.setFileName(excelFile.getName());
-
+            msgMultipart.addBodyPart(attch);
+        }
         // 7. 保存设置
         message.saveChanges();
         return message;

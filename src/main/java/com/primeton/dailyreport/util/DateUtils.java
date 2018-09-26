@@ -3,6 +3,11 @@ package com.primeton.dailyreport.util;
 
 import org.springframework.util.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -190,7 +195,41 @@ public class DateUtils {
         }
         return String.valueOf(year) + String.valueOf(month);
     }
+
+    /**
+     * 判断是否为节假日
+     * @param date
+     * @return
+     */
+    public static int holiday(String date) {
+        String httpUrl = "http://api.goseek.cn/Tools/holiday";
+        date = date.substring(0, 4) +  date.substring(5, 7) + date.substring(8, 10);
+        BufferedReader reader = null;
+        String result = null;
+        StringBuffer sbf = new StringBuffer();
+        httpUrl = httpUrl + "?date=" + date;
+
+        try {
+            URL url = new URL(httpUrl);
+            HttpURLConnection connection = (HttpURLConnection) url
+                    .openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+            InputStream is = connection.getInputStream();
+            reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            String strRead = null;
+            while ((strRead = reader.readLine()) != null) {
+                sbf.append(strRead);
+            }
+            reader.close();
+            result = sbf.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Integer.parseInt(result.substring(result.length() - 2, result.length() - 1));
+    }
+
     public static void main(String[] args) {
-        System.out.println(getCurrentMonday(0));
+        System.out.println(holiday("20181001"));
     }
 }
