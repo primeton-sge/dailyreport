@@ -125,11 +125,11 @@ public class MailController {
     @RequestMapping(value = "/sendremanning.htm")
     @ResponseBody
     public String sendReminding() {
-        String startdate = DateUtils.getCurrentMonday(0 - 7);
-        String enddate = DateUtils.getCurrentMonday(4 - 7);
+        String startdate = DateUtils.getCurrentMonday(0);
+        String enddate = DateUtils.getCurrentMonday(4);
         List<String> datelist = new ArrayList<>();
         for(int i = 0; i <= 4; i++) {
-            datelist.add(DateUtils.getCurrentMonday(i - 7));
+            datelist.add(DateUtils.getCurrentMonday(i));
         }
         Map<String, List<String>> map = new HashMap<>();
         Map<String, StringBuffer> map2 = new HashMap<>();
