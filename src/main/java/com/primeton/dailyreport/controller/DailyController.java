@@ -60,7 +60,7 @@ public class DailyController extends BaseController {
             if(tempdate.equals(enddate)) {
                 break;
             } else {
-                if(!markedList.contains(tempdate)) {
+                if(!markedList.contains(tempdate) && DateUtils.holiday(tempdate) != 2) {
                     leak.add(tempdate);
                 }
             }

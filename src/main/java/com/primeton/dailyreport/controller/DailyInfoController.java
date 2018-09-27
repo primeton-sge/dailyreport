@@ -144,7 +144,9 @@ public class DailyInfoController extends BaseController {
                     if(map2.get(name) == null) {
                         map2.put(name, new StringBuffer());
                     }
-                    map2.get(name).append(datelist.get(i) + ", ");
+                    if(DateUtils.holiday(datelist.get(i)) != 2) {
+                        map2.get(name).append(datelist.get(i) + ", ");
+                    }
                 }
             }
         }

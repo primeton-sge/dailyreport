@@ -121,58 +121,60 @@ public class MailController {
     }
 
 
-//    @Scheduled(cron = "0 0 17 ? * FRI")
-//    @RequestMapping(value = "/sendremanning.htm")
-//    @ResponseBody
-//    public String sendReminding() {
-//        String startdate = DateUtils.getCurrentMonday(0);
-//        String enddate = DateUtils.getCurrentMonday(4);
-//        List<String> datelist = new ArrayList<>();
-//        for(int i = 0; i <= 4; i++) {
-//            datelist.add(DateUtils.getCurrentMonday(i));
-//        }
-//        Map<String, List<String>> map = new HashMap<>();
-//        Map<String, StringBuffer> map2 = new HashMap<>();
-//        List<LeakyRecord> leakyRecordList = new ArrayList<>();
-//        List<DailyUser> dailyUserList = new ArrayList<>();
-//        try {
-//            leakyRecordList = dailyInfoService.check(startdate, enddate);
-//            dailyUserList = dailyUserService.queryAll();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        for(DailyUser dailyUser : dailyUserList) {
-//            map.put(dailyUser.getRealname(), new ArrayList<>());
-//        }
-//        for(LeakyRecord leakyRecord : leakyRecordList) {
-//            map.get(leakyRecord.getName()).add(leakyRecord.getDate());
-//        }
-//        for(int i = 0; i < 5; i++) {
-//            for(String name : map.keySet()) {
-//                if(!map.get(name).contains(datelist.get(i))) {
-//                    if(map2.get(name) == null) {
-//                        map2.put(name, new StringBuffer());
-//                    }
-//                    map2.get(name).append(datelist.get(i) + ", ");
-//                }
-//            }
-//        }
-//        for(int i = 0; i < dailyUserList.size(); i++) {
-//            DailyUser dailyUser = dailyUserList.get(i);
-//            String msg = null;
-//            if(map2.get(dailyUser.getRealname()).length() > 0) {
-//                msg = "您有以下日期" + map2.get(dailyUser.getRealname()).toString().
-//                        substring(0, map2.get(dailyUser.getRealname()).length() - 2) + "的工时未填写，请及时填写。\r\n" +
-//                        "为了方便工时的统计，也请勿忘记今日工时的填写!";
-//            } else {
-//                msg = "为了方便工时的统计，请勿忘记今日工时的填写!";
-//            }
-//            try {
-//                mailService.sendSimple(msg, dailyUser.getMail(), dailyUser.getRealname());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return "success";
-//    }
+    //@Scheduled(cron = "0 0 17 ? * FRI")
+    @RequestMapping(value = "/sendremanning.htm")
+    @ResponseBody
+    public String sendReminding() {
+        String startdate = DateUtils.getCurrentMonday(0 - 7);
+        String enddate = DateUtils.getCurrentMonday(4 - 7);
+        List<String> datelist = new ArrayList<>();
+        for(int i = 0; i <= 4; i++) {
+            datelist.add(DateUtils.getCurrentMonday(i - 7));
+        }
+        Map<String, List<String>> map = new HashMap<>();
+        Map<String, StringBuffer> map2 = new HashMap<>();
+        List<LeakyRecord> leakyRecordList = new ArrayList<>();
+        List<DailyUser> dailyUserList = new ArrayList<>();
+        try {
+            leakyRecordList = dailyInfoService.check(startdate, enddate);
+            dailyUserList = dailyUserService.queryAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for(DailyUser dailyUser : dailyUserList) {
+            map.put(dailyUser.getRealname(), new ArrayList<>());
+        }
+        for(LeakyRecord leakyRecord : leakyRecordList) {
+            map.get(leakyRecord.getName()).add(leakyRecord.getDate());
+        }
+        for(int i = 0; i < 5; i++) {
+            for(String name : map.keySet()) {
+                if(!map.get(name).contains(datelist.get(i))) {
+                    if(map2.get(name) == null) {
+                        map2.put(name, new StringBuffer());
+                    }
+                    if(DateUtils.holiday(datelist.get(i)) != 2) {
+                        map2.get(name).append(datelist.get(i) + ", ");
+                    }
+                }
+            }
+        }
+        for(int i = 0; i < dailyUserList.size(); i++) {
+            DailyUser dailyUser = dailyUserList.get(i);
+            String msg = null;
+            if(map2.get(dailyUser.getRealname()).length() > 0) {
+                msg = "您有以下日期" + map2.get(dailyUser.getRealname()).toString().
+                        substring(0, map2.get(dailyUser.getRealname()).length() - 2) + "的工时未填写，请及时填写。\r\n" +
+                        "为了方便工时的统计，也请勿忘记今日工时的填写!";
+            } else {
+                msg = "为了方便工时的统计，请勿忘记今日工时的填写!";
+            }
+            try {
+                mailService.sendSimple(msg, dailyUser.getMail(), dailyUser.getRealname());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return "success";
+    }
 }

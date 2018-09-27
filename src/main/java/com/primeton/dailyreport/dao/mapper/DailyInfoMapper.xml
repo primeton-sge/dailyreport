@@ -162,6 +162,7 @@
         from t_dr_daily a
         left join t_dr_user b on a.f_uid=b.f_uid
         where f_date <![CDATA[>=]]> #{startdate} and f_date <![CDATA[<=]]> #{enddate}
+          and (f_jurisdiction ='2' or f_jurisdiction ='3')
     </select>
 
     <select id="checkDate" resultType="String">
