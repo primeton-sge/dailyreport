@@ -30,10 +30,10 @@ public class MailController {
     @Autowired
     private DailyUserService dailyUserService;
 
-    //@Scheduled(cron = "0 0 9 ? * MON")
-    @RequestMapping(value = {"/sendmail.htm"})
-    @ResponseBody
-    public String sendStatistics() {
+    @Scheduled(cron = "0 0 9 ? * MON")
+//    @RequestMapping(value = {"/sendmail.htm"})
+//    @ResponseBody
+    public void sendStatistics() {
         Map<String, Map<String, String>> excelMap = new HashMap<>();
         List<ExcelInfo> excelInfoList = new ArrayList<>();
         List<Date> dates = new ArrayList<>();
@@ -107,7 +107,7 @@ public class MailController {
         fileList.add(dataFile);
         try {
             System.setProperty("mail.mime.splitlongparameters","false");
-            mailService.send("上周考勤工作量统计", fileList, "xuning@primeton.com");
+            mailService.send("上周考勤工作量统计", fileList, "qian-jun@primeton.com");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -117,14 +117,13 @@ public class MailController {
                 }
             }
         }
-        return "success";
     }
 
 
-    //@Scheduled(cron = "0 0 17 ? * FRI")
-    @RequestMapping(value = "/sendremanning.htm")
-    @ResponseBody
-    public String sendReminding() {
+    @Scheduled(cron = "0 0 17 ? * FRI")
+//    @RequestMapping(value = "/sendremanning.htm")
+//    @ResponseBody
+    public void sendReminding() {
         String startdate = DateUtils.getCurrentMonday(0);
         String enddate = DateUtils.getCurrentMonday(4);
         List<String> datelist = new ArrayList<>();
@@ -162,7 +161,7 @@ public class MailController {
         for(int i = 0; i < dailyUserList.size(); i++) {
             DailyUser dailyUser = dailyUserList.get(i);
             String msg = null;
-            if(map2.get(dailyUser.getRealname()).length() > 0) {
+            if(map2.get(dailyUser.getRealname()) != null && map2.get(dailyUser.getRealname()).length() > 0) {
                 msg = "您有以下日期" + map2.get(dailyUser.getRealname()).toString().
                         substring(0, map2.get(dailyUser.getRealname()).length() - 2) + "的工时未填写，请及时填写。\r\n" +
                         "为了方便工时的统计，也请勿忘记今日工时的填写!";
@@ -170,11 +169,12 @@ public class MailController {
                 msg = "为了方便工时的统计，请勿忘记今日工时的填写!";
             }
             try {
-                mailService.sendSimple(msg, dailyUser.getMail(), dailyUser.getRealname());
+                if(msg != null) {
+                    mailService.sendSimple(msg, dailyUser.getMail(), dailyUser.getRealname());
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return "success";
     }
 }
