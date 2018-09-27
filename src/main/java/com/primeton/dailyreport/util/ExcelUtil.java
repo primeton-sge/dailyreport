@@ -240,8 +240,10 @@ public class ExcelUtil {
                 String data = excelInfo.getInfoMap().get(dateString);
                 int rownum = Integer.parseInt(dateString.substring(dateString.length() - 2 ,dateString.length()));
                 if(data == null) {
-                    if(!getWeekOfDate(date).equals("日") && !getWeekOfDate(date).equals("六")) {
+                    if(!getWeekOfDate(date).equals("日") && !getWeekOfDate(date).equals("六") &&
+                            DateUtils.holiday(dateString) != 2) {
                         sheet.getRow(rownum).getCell(3 * i + 3).setCellValue(18 + ":00");
+                        sheet.getRow(rownum).getCell(3 * i + 4).setCellValue(8);
                     }
                 } else {
                     String[] datas = data.split("@");
