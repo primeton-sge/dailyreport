@@ -1,11 +1,8 @@
 package com.primeton.dailyreport.util;
 
-import org.python.util.PythonInterpreter;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.Properties;
 
 public class PythonUtil {
     public static void callPython(String username, String password, String projectid, String taskid, String content, String date,String actHour,String otwHour) {

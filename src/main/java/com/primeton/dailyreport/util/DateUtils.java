@@ -202,31 +202,31 @@ public class DateUtils {
      * @return
      */
     public static int holiday(String date) {
-        String httpUrl = "http://api.goseek.cn/Tools/holiday";
-        date = date.substring(0, 4) +  date.substring(5, 7) + date.substring(8, 10);
-        BufferedReader reader = null;
-        String result = null;
-        StringBuffer sbf = new StringBuffer();
-        httpUrl = httpUrl + "?date=" + date;
-
-        try {
-            URL url = new URL(httpUrl);
-            HttpURLConnection connection = (HttpURLConnection) url
-                    .openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-            InputStream is = connection.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            String strRead = null;
-            while ((strRead = reader.readLine()) != null) {
-                sbf.append(strRead);
-            }
-            reader.close();
-            result = sbf.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Integer.parseInt(result.substring(result.length() - 2, result.length() - 1));
+        // String httpUrl = "http://api.goseek.cn/Tools/holiday";
+        // date = date.substring(0, 4) +  date.substring(5, 7) + date.substring(8, 10);
+        // BufferedReader reader = null;
+        // String result = null;
+        // StringBuffer sbf = new StringBuffer();
+        // httpUrl = httpUrl + "?date=" + date;
+        //
+        // try {
+        //     URL url = new URL(httpUrl);
+        //     HttpURLConnection connection = (HttpURLConnection) url
+        //             .openConnection();
+        //     connection.setRequestMethod("GET");
+        //     connection.connect();
+        //     InputStream is = connection.getInputStream();
+        //     reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        //     String strRead = null;
+        //     while ((strRead = reader.readLine()) != null) {
+        //         sbf.append(strRead);
+        //     }
+        //     reader.close();
+        //     result = sbf.toString();
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
+        return 0;
     }
 
     public static void main(String[] args) {

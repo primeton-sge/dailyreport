@@ -140,49 +140,50 @@ public class DailyController extends BaseController {
 
     @RequestMapping(value = {"/send.htm"})
     public String send(HttpServletRequest request, @ModelAttribute("date") String date, Model model) {
-        DailyUser user = (DailyUser) request.getSession().getAttribute(DR_USER);
-        String actHour = "0";
-        String otwHour = "0";
-        int temp = 0;
-        int tempAll = 0;
-        Integer[] u = new Integer[1];
-        u[0] = user.getUid();
-        if (user.getAmeUsername() != null && !user.getAmeUsername().equals("")) {
-            AmeTask ameTask = new AmeTask();
-            try {
-                ameTask = ameService.queryByTid(user.getAmeTaskId());
-                List<DailyInfoPlus> hour = dailyInfoService.query(date, date, null, u);
-                for (DailyInfoPlus d : hour) {
-                    if (d.getFlag() == 0) {
-                        temp += d.getMan_hours();
-                    }
-                    tempAll += d.getMan_hours();
-                }
-                if (tempAll >= 8) {
-                    actHour = String.valueOf(temp);
-                    otwHour = String.valueOf(tempAll - 8);
-                } else {
-                    if (temp <= 8) {
-                        actHour = String.valueOf(temp);
-                    } else {
-                        actHour = "8";
-                        otwHour = String.valueOf(temp - 8);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                dailyInfoService.updateFlag(date, user.getUid());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            if (!actHour.equals("0")) {
-                PythonUtil.callPython(user.getAmeUsername(), AESUtil.invokeDecryptEncode(user.getAmePassword()), String.valueOf(user.getAmeProjectId()),
-                        String.valueOf(user.getAmeTaskId()), ameTask.getAmeTaskName(), date, actHour, otwHour);
-            }
-            model.addAttribute(SUCCESS_MSG, "工时同步至AME成功");
-        }
+        // DailyUser user = (DailyUser) request.getSession().getAttribute(DR_USER);
+        // String actHour = "0";
+        // String otwHour = "0";
+        // int temp = 0;
+        // int tempAll = 0;
+        // Integer[] u = new Integer[1];
+        // u[0] = user.getUid();
+        // if (user.getAmeUsername() != null && !user.getAmeUsername().equals("")) {
+        //     AmeTask ameTask = new AmeTask();
+        //     try {
+        //         ameTask = ameService.queryByTid(user.getAmeTaskId());
+        //         List<DailyInfoPlus> hour = dailyInfoService.query(date, date, null, u);
+        //         for (DailyInfoPlus d : hour) {
+        //             if (d.getFlag() == 0) {
+        //                 temp += d.getMan_hours();
+        //             }
+        //             tempAll += d.getMan_hours();
+        //         }
+        //         if (tempAll >= 8) {
+        //             actHour = String.valueOf(temp);
+        //             otwHour = String.valueOf(tempAll - 8);
+        //         } else {
+        //             if (temp <= 8) {
+        //                 actHour = String.valueOf(temp);
+        //             } else {
+        //                 actHour = "8";
+        //                 otwHour = String.valueOf(temp - 8);
+        //             }
+        //         }
+        //     } catch (Exception e) {
+        //         e.printStackTrace();
+        //     }
+        //     try {
+        //         dailyInfoService.updateFlag(date, user.getUid());
+        //     } catch (SQLException e) {
+        //         e.printStackTrace();
+        //     }
+        //     if (!actHour.equals("0")) {
+        //         PythonUtil.callPython(user.getAmeUsername(), AESUtil.invokeDecryptEncode(user.getAmePassword()), String.valueOf(user.getAmeProjectId()),
+        //                 String.valueOf(user.getAmeTaskId()), ameTask.getAmeTaskName(), date, actHour, otwHour);
+        //     }
+        //     model.addAttribute(SUCCESS_MSG, "工时同步至AME成功");
+        // }
+        model.addAttribute(SUCCESS_MSG, "暂停使用...");
         return "user/edit";
     }
 }
